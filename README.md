@@ -18,8 +18,24 @@ Installer streamlit
 pip install streamlit pandas matplotlib
 ```
 
-Kør appen
+Kør Streamlit-appen
 
 ```bash
 streamlit run streamlit_app.py
 ```
+
+## Kør med Docker
+
+Byg image:
+
+```bash
+docker build -t greve-trivsel:latest .
+```
+
+Kør container:
+
+```bash
+docker run --rm -p 8501:8501 greve-trivsel:latest
+```
+
+Åbn: [http://localhost:8501](http://localhost:8501)
