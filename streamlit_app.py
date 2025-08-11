@@ -97,7 +97,13 @@ heat = heat.sort_index()
 
 fig = plt.figure(figsize=(12, 14))
 ax = fig.add_subplot(111)
-im = ax.imshow(heat.values, aspect="auto")
+vmin = float(np.nanmin(heat.values)) if np.isfinite(np.nanmin(heat.values)) else 0.0
+vmax = float(np.nanmax(heat.values)) if np.isfinite(np.nanmax(heat.values)) else 1.0
+
+# Use a readable, colorblind-friendly colormap and explicit normalization
+cmap = plt.get_cmap("YlGnBu")
+norm = plt.Normalize(vmin=vmin, vmax=vmax)
+im = ax.imshow(heat.values, aspect="auto", cmap=cmap, norm=norm)
 
 # Axis ticks
 ax.set_yticks(np.arange(heat.shape[0]))
@@ -118,7 +124,17 @@ for i in range(heat.shape[0]):
     for j in range(heat.shape[1]):
         val = heat.values[i, j]
         if pd.notna(val):
-            ax.text(j, i, f"{val:.1f}", ha="center", va="center", fontsize=7, color="white" if val>15 else "black")
+            # Choose text color based on background luminance for readability
+            r, g, b, _ = cmap(norm(val))
+            luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+            text_color = "black" if luminance > 0.6 else "white"
+            ax.text(j, i, f"{val:.1f}", ha="center", va="center", fontsize=7, color=text_color)
+
+# Add subtle gridlines between cells for visual separation
+ax.set_xticks(np.arange(-0.5, heat.shape[1], 1), minor=True)
+ax.set_yticks(np.arange(-0.5, heat.shape[0], 1), minor=True)
+ax.grid(which="minor", color="white", linestyle="-", linewidth=0.3, alpha=0.4)
+ax.tick_params(which="minor", bottom=False, left=False)
 
 st.pyplot(fig)
 
