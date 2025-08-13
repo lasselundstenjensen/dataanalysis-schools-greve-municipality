@@ -2,7 +2,7 @@
   "name": "Greve Schools devcontainer",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "."
+    "context": ".."
   },
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
